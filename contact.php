@@ -1,3 +1,97 @@
+<?php
+    require 'includes/connect.php';
+
+    function test_input($data) {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+    }
+
+    if(isset($_POST['submit'])){
+        $errors = array();
+        $error = false;
+    
+        if(empty($_POST['name'])) {
+            array_push($errors, 'You must type your name');
+            $error = true;
+        } else {
+            $name = $_POST['name'];
+        }
+    
+        if(empty($_POST['surname'])) {
+            array_push($errors, 'You must type your surname');
+            $error = true;
+        } else {
+            $surname = $_POST['surname'];
+        }
+    
+        if(!empty($gender) && $gender != "Male" && $gender != "Female"){
+            $error[] = "Gender not valid";
+        } else {
+            $gender = $_POST['gender'];
+        }
+
+        if(empty($_POST['phone'])) {
+            array_push($errors, 'You must type a phone number');
+            $error = true;
+        } else {
+            $phone = test_input($_POST['phone']);
+        }
+
+        if(empty($_POST['email'])) {
+            array_push($errors, 'You must type an email');
+            $error = true;
+        } else {
+            $email = test_input($_POST['email']);
+        }
+
+        if(empty($_POST['fac_coffee'])) {
+            array_push($errors, 'You must check a favorite coffee');
+            $error = true;
+        } else {
+            $fac_coffee = $_POST['fac_coffee'];
+        }
+
+        if(empty($_POST['age'])) {
+            array_push($errors, 'You must check an age');
+            $error = true;
+        } else {
+            $age = $_POST['age'];
+        }
+
+        $fav = implode("|", $fac_coffee);
+
+
+        if(!$error){
+            $message = '';
+            
+            $sql = 'INSERT INTO contacts (name, surname, gender, phone, email, fav_coffee, age) 
+            VALUES (:name, :surname, :gender, :phone, :email, :fav_coffee, :age)';
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+            $query = $pdo->prepare($sql);
+            $query->bindParam(':name', $name);
+            $query->bindParam(':surname', $surname);
+            $query->bindParam(':gender', $gender);
+            $query->bindParam(':phone',$phone);
+            $query->bindParam(':email',$email);
+            $query->bindParam(':fav_coffee',$fav);
+            $query->bindParam(':age',$age);
+    
+            $contact = $query->execute();
+    
+            if($contact) {
+                $message = "Successfully send your data";
+            } else {
+                $message = "A problem occurred sending your data";
+                echo "\PDO::errorInfo():\n";
+                print_r($pdo->errorInfo());
+            }
+        }
+    }
+?>
+
+
 <!DOCTYPE  html>
 <html>
 <head>
@@ -20,7 +114,7 @@
            </div>
 
            <div class="form">
-               <form action="contact.html" id="form" name="form-registration">
+               <form action="contact.php" method="POST" id="form" name="form-registration">
                <label for="name">Name: </label><br/>
                <input name="name" type="text" required minlength="2"
                class="input-text" id="name" placeholder="Enter your name" /><br/>
@@ -36,13 +130,24 @@
                <input name="phone" type="tel" class="input-text" id="phone"><br/>
                <label for="email">Email:</label><br/>
                <input name="email" type="email" class="input-text" id="email">
+               
+               <p>Choose your favorite cooffee:</p>
+               <input type="checkbox" name="fac_coffee[]" value="Espresso">Espresso<br>
+               <input type="checkbox" name="fac_coffee[]" value="Macchiato">Macchiato<br>
+               <input type="checkbox" name="fac_coffee[]" value="Latte">Cafe Latte<br>
+               <p>Please select your age:</p>
+               <input type="radio" name="age" value="30"> 0 - 30<br>
+                <input type="radio" name="age" value="60"> 31 - 60<br>
+                <input type="radio" name="age" value="100"> 61 - 100<br>
                <input name="submit" type="submit" value="Submit">
             </form>
-           </div>
+           
        </div>
         
         <!-- End of Content Section -->
 
        <?php include('includes/footer.php'); ?>
-</body>
+    
+    
+    </body>
 </html>

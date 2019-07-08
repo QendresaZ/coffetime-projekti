@@ -1,7 +1,7 @@
 <?php
 include('includes/connect.php');
 
-$query = $pdo->query("SELECT * FROM services");
+$query = $pdo->query("SELECT * FROM services ORDER BY date_created DESC LIMIT 3;");
 $services = $query->fetchAll();
 
 ?>
@@ -19,11 +19,14 @@ $services = $query->fetchAll();
 
     <body>
         <div id="container">
-            <?php include('includes/header.php'); ?>
+        <?php include('includes/header.php'); ?>
             <div class="services">
 
-                <?php foreach($services as $service): ?>
-                <?endforeach; ?>
+            <?php foreach($services as $service): ?>
+            <h3><?php echo $service['title']; ?></h3>
+            <p><?php echo $service['description']; ?></p>
+            <img class = "servicePhoto" src="uploads/<?php echo $service['photo']; ?>">
+            <?php endforeach; ?>
 
             </div>
             <?php include('includes/footer.php'); ?>

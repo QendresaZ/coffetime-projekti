@@ -372,7 +372,7 @@ About Page
 ==================================
 */
 .aboutUs{
-    background-color: #ebead1;
+    background-color: #e7e24a;
 }
 .aboutUs h2{
     color: #221711;
@@ -422,11 +422,10 @@ End of Contact Page
 ==================================
 */
 
-/*
-==================================
-End of Contact Page
-==================================
-*/
+.service .servicePhoto {
+    width: 250px;
+    height: 300px;
+}
 
 /*
 ==================================
